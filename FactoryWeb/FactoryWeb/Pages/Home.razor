@@ -1,0 +1,26 @@
+﻿@page "/Index"
+
+<PageTitle>Index</PageTitle>
+
+@code {
+    List<ComicFavorito> _lstComicfavoritos = new();
+    int usuarioId = UsuarioDto.UsuarioId;
+
+    protected override async Task OnInitializedAsync()
+    {        
+        await ConsultarComicsFavoritos();
+    }
+
+    private async Task ConsultarComicsFavoritos()
+    {
+        var response = await _http.GetFromJsonAsync<List<ComicFavorito>>($"Api/ComicFavorito/ConsultarComicsFavoritos/{usuarioId}");
+
+        if (response != null)
+        {
+            _lstComicfavoritos = response;
+        }
+
+        StateHasChanged();
+    }
+
+}

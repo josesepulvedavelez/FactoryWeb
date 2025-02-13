@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34928.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactoryWeb", "FactoryWeb\FactoryWeb.csproj", "{1DD7AD14-5323-485A-8ACF-36CEDD189CBE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1DD7AD14-5323-485A-8ACF-36CEDD189CBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DD7AD14-5323-485A-8ACF-36CEDD189CBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DD7AD14-5323-485A-8ACF-36CEDD189CBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DD7AD14-5323-485A-8ACF-36CEDD189CBE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A3575A0C-B217-4C32-AF84-B22245D50CF3}
+	EndGlobalSection
+EndGlobal
