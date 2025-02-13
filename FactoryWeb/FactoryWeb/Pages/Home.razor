@@ -2,6 +2,44 @@
 
 <PageTitle>Index</PageTitle>
 
+<h3>Bienvenido <b>@UsuarioDto.Nombre</b> </h3>
+
+<div class="container">
+    <div class="rz-p-sm-12">
+        <RadzenFieldset>
+            <HeaderTemplate>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                    <RadzenIcon Icon="account_box" /><b>@UsuarioDto.UserName</b>
+                </RadzenStack>
+            </HeaderTemplate>
+            <ChildContent>
+                <RadzenAccordion Multiple="true">
+                    <Items>
+                        <RadzenAccordionItem Text="Mis comics favcoritos" Icon="done">
+                            <RadzenDataGrid PageSize="5"
+                                            Data="@_lstComicfavoritos" 
+                                            SelectionMode="DataGridSelectionMode.Single">
+                                <Columns>                                    
+                                    @* <RadzenDataGridColumn Title="Photo" Frozen="true" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+                                        <Template Context="data">
+                                            <RadzenImage Path="@data.Photo" class="rz-gravatar" AlternateText="@(data.FirstName + " " + data.LastName)" />
+                                        </Template>
+                                    </RadzenDataGridColumn> *@
+                                    <RadzenDataGridColumn Property="@nameof(ComicFavorito.Id)" Title="Id" Frozen="true" Width="160px" />
+                                    <RadzenDataGridColumn Property="@nameof(ComicFavorito.Title)" Title="Title" Width="160px" />
+                                </Columns>
+                            </RadzenDataGrid>
+                        </RadzenAccordionItem>
+                        <RadzenAccordionItem Text="Comics Marvels" Icon="motorcycle">
+                            Details for Employees
+                        </RadzenAccordionItem>                        
+                    </Items>
+                </RadzenAccordion>
+            </ChildContent>
+        </RadzenFieldset>        
+    </div>
+</div>
+
 @code {
     List<ComicFavorito> _lstComicfavoritos = new();
     int usuarioId = UsuarioDto.UsuarioId;
