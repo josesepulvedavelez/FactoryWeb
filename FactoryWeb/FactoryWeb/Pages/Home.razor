@@ -1,6 +1,6 @@
 ﻿@page "/Index"
-
-<PageTitle>Index</PageTitle>
+<RadzenNotification />
+<RadzenDialog />
 
 <h3>Bienvenido <b>@UsuarioDto.Nombre</b> </h3>
 
@@ -20,18 +20,35 @@
                                             Data="@_lstComicfavoritos" 
                                             SelectionMode="DataGridSelectionMode.Single">
                                 <Columns>                                    
-                                    @* <RadzenDataGridColumn Title="Photo" Frozen="true" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+                                    <RadzenDataGridColumn Title="Photo" Width="80px" TextAlign="TextAlign.Center">
                                         <Template Context="data">
-                                            <RadzenImage Path="@data.Photo" class="rz-gravatar" AlternateText="@(data.FirstName + " " + data.LastName)" />
+                                            <RadzenImage Path="@($"{data.Path}.{data.Extension}")" class="rz-gravatar" AlternateText="@data.Title" />
                                         </Template>
-                                    </RadzenDataGridColumn> *@
+                                    </RadzenDataGridColumn>
                                     <RadzenDataGridColumn Property="@nameof(ComicFavorito.Id)" Title="Id" Frozen="true" Width="160px" />
                                     <RadzenDataGridColumn Property="@nameof(ComicFavorito.Title)" Title="Title" Width="160px" />
                                 </Columns>
                             </RadzenDataGrid>
                         </RadzenAccordionItem>
                         <RadzenAccordionItem Text="Comics Marvels" Icon="motorcycle">
-                            Details for Employees
+                            <RadzenDataGrid PageSize="5"
+                                            Data="@_lstComicsMarvel"
+                                            SelectionMode="DataGridSelectionMode.Single">
+                                <Columns>
+                                    <RadzenDataGridColumn Title="Photo" Width="80px" TextAlign="TextAlign.Center">
+                                        <Template Context="data">
+                                            <RadzenImage Path="@($"{data.Path}.{data.Extension}")" class="rz-gravatar" AlternateText="@data.Title" />
+                                        </Template>
+                                    </RadzenDataGridColumn>
+                                    <RadzenDataGridColumn Property="@nameof(ComicMarvel.Id)" Title="Id" Frozen="true" Width="160px" />
+                                    <RadzenDataGridColumn Property="@nameof(ComicMarvel.Title)" Title="Title" Width="160px" />
+                                    <RadzenDataGridColumn Title="Actions" Width="100px" TextAlign="TextAlign.Center">
+                                        <Template Context="data">
+                                            <RadzenButton Icon="favorite" Click="@(() => GuardarComicFavorito(data))" />
+                                        </Template>
+                                    </RadzenDataGridColumn>
+                                </Columns>
+                            </RadzenDataGrid>
                         </RadzenAccordionItem>                        
                     </Items>
                 </RadzenAccordion>
@@ -42,11 +59,14 @@
 
 @code {
     List<ComicFavorito> _lstComicfavoritos = new();
+    List<ComicMarvel> _lstComicsMarvel = new();
     int usuarioId = UsuarioDto.UsuarioId;
+    string urlMarvel = "https://gateway.marvel.com/v1/public/comics?ts=1&apikey=00ae84df8f97146a01a6d54d203b3019&hash=1f71187c1792a9e07808d9a2173c13e6";
 
     protected override async Task OnInitializedAsync()
     {        
         await ConsultarComicsFavoritos();
+        await ConsultarComicsMarvel();
     }
 
     private async Task ConsultarComicsFavoritos()
@@ -59,6 +79,86 @@
         }
 
         StateHasChanged();
+    }
+
+    private async Task ConsultarComicsMarvel()
+    {
+        var response = await _httpMarvel.GetFromJsonAsync<MarvelApiResponse>($"{urlMarvel}");
+
+        if (response != null && response.Data != null && response.Data.Results != null)
+        {
+            _lstComicsMarvel = response.Data.Results.Select(comic => new ComicMarvel
+                {
+                    Id = comic.Id,
+                    Title = comic.Title,
+                    Path = comic.Thumbnail?.Path,
+                    Extension = comic.Thumbnail?.Extension
+                }).ToList();
+        }
+
+        StateHasChanged();
+    }
+
+    public async Task GuardarComicFavorito(ComicMarvel comicMarvel)
+    {        
+        var comicExistente = _lstComicfavoritos.FirstOrDefault(c => c.Id == comicMarvel.Id);
+
+        if (comicExistente != null)
+        {     
+            ShowNotification(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Guardar cómic",
+                    Detail = "El cómic ya está en tu lista de favoritos.",
+                    Duration = 6000
+                });
+            return;
+        }
+
+        var confirmar = await DialogService.Confirm("¿Está seguro de guardar este cómic en favoritos?", "Confirmar");
+
+        if (confirmar == true)
+        {
+            var comicFavorito = new ComicFavorito
+                {
+                    Id = comicMarvel.Id,
+                    Title = comicMarvel.Title,
+                    Path = comicMarvel.Path,
+                    Extension = comicMarvel.Extension,
+                    UsuarioId = usuarioId
+                };
+
+            var response = await _http.PostAsJsonAsync("Api/ComicFavorito/GuardarComicFavorito", comicFavorito);
+
+            if (response.IsSuccessStatusCode)
+            {
+                await ConsultarComicsFavoritos();
+
+                ShowNotification(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Guardar cómic",
+                        Detail = "Cómic guardado exitosamente.",
+                        Duration = 6000
+                    });
+                DialogService.Close(true);
+            }
+            else
+            {
+                ShowNotification(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Guardar cómic",
+                        Detail = "No se pudo guardar el cómic.",
+                        Duration = 6000
+                    });
+            }
+        }
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
     }
 
 }

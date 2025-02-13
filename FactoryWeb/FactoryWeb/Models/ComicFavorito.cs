@@ -14,6 +14,6 @@ namespace FactoryWeb.Models
         public string? Extension { get; set; }
 
         [ForeignKey("Usuario")]
-        public int UsuarioId { get; set; }
+        public int? UsuarioId { get; set; }
     }
 }
