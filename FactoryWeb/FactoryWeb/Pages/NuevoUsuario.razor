@@ -1,0 +1,124 @@
+﻿@page "/NuevoUsuario"
+@layout NuevoUsuarioLayout
+
+<RadzenNotification />
+<RadzenDialog />
+
+<h3 style="text-align:center;">
+    Marvel studios
+</h3>
+
+<EditForm Model="_usuario" OnValidSubmit="@GuardarUsuario">
+    <DataAnnotationsValidator />
+
+    <RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 600px;">
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Nombre</label>
+            <div class="col-sm-6">
+                <RadzenTextBox class="form-control" @bind-Value="@_usuario.Nombre" />
+                <ValidationMessage For="@(() => _usuario.Nombre)" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Identificacion</label>
+            <div class="col-sm-6">
+                <RadzenTextBox class="form-control" @bind-Value="@_usuario.Identificacion" />
+                <ValidationMessage For="@(() => _usuario.Identificacion)" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Correo</label>
+            <div class="col-sm-6">
+                <RadzenTextBox class="form-control" @bind-Value="@_usuario.Correo" />
+                <ValidationMessage For="@(() => _usuario.Correo)" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label">UserName</label>
+            <div class="col-sm-6">
+                <RadzenTextBox class="form-control" @bind-Value="@_usuario.UserName" />
+                <ValidationMessage For="@(() => _usuario.UserName)" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Contraseña</label>
+            <div class="col-sm-6">
+                <RadzenPassword class="form-control" @bind-Value="@_usuario.Pass" aria-label="enter password" />
+                <ValidationMessage For="@(() => _usuario.Pass)" />
+            </div>
+        </div>
+
+        <br />
+
+        <div class="form-group">
+            <div class="text-center">
+                <RadzenButton class="btn btn-success" ButtonType="ButtonType.Submit" Text="Guardar" />
+            </div>
+        </div>
+
+        <br />
+
+        <div class="form-group text-center">
+            <button type="button" class="btn btn-link text-primary" style="text-decoration: none;" @onclick="@Login">
+                Regresar
+            </button>
+        </div>
+
+    </RadzenCard>
+</EditForm>
+
+@code {
+    Usuario _usuario = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
+
+    private async Task GuardarUsuario()
+    {
+        var confirmar = await DialogService.Confirm("¿Esta seguro de guardar esta información?", "Confirmar");
+
+        if (confirmar == true)
+        {
+            var json = JsonConvert.SerializeObject(_usuario);
+            var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            var httpResponse = await _http.PostAsync("/Api/Usuario/GuardarUsuario", stringContent);
+
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                ShowNotification(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Marvel studios",
+                    Detail = "Usuario guardado exitosamente.",
+                    Duration = 5000
+                });
+                DialogService.Close(true);
+
+                navigation.NavigateTo("/");
+            }
+            else
+            {
+                ShowNotification(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Warning,
+                        Summary = "Marvel studios",
+                        Detail = "Usuario no guardado exitosamente.",
+                        Duration = 5000
+                    });
+            }
+        }
+    }
+
+    public async Task Login()
+    {
+        navigation.NavigateTo("/");
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+}

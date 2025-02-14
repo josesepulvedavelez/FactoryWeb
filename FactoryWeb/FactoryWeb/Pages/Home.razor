@@ -45,6 +45,7 @@
                                     <RadzenDataGridColumn Title="Actions" Width="100px" TextAlign="TextAlign.Center">
                                         <Template Context="data">
                                             <RadzenButton Icon="favorite" Click="@(() => GuardarComicFavorito(data))" />
+                                            <RadzenButton Icon="visibility" Click="@(() => VerDetalle(data))" />
                                         </Template>
                                     </RadzenDataGridColumn>
                                 </Columns>
@@ -154,6 +155,13 @@
                     });
             }
         }
+    }
+
+    public async Task VerDetalle(ComicMarvel comicMarvel)
+    {
+        await DialogService.OpenAsync<ComicDetalle>($"Comic detalle",
+            new Dictionary<string, object>() { { "Comic", comicMarvel } },
+            new DialogOptions() { Width = "700px", Height = "650px", Resizable = true });
     }
 
     void ShowNotification(NotificationMessage message)

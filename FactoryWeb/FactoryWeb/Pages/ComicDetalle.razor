@@ -1,0 +1,19 @@
+﻿@page "/ComicDetalle"
+
+@if (Comic != null)
+{
+    <p><strong>Título:</strong> @Comic.Title</p>
+    <p><strong>Título:</strong> @Comic.Id</p>
+    <p><strong>Imagen:</strong> <img src="@($"{Comic.Path}.{Comic.Extension}")" alt="@Comic.Title" /></p>
+}
+else
+{
+    <p>No se ha proporcionado información del cómic.</p>
+}
+
+<RadzenButton Text="Cerrar" Click="@(() => DialogService.Close())" />
+
+@code {
+    [Parameter]
+    public ComicMarvel Comic { get; set; }        
+}

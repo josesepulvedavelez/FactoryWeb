@@ -36,6 +36,15 @@
                 <RadzenButton class="btn btn-primary" ButtonType="ButtonType.Submit" Text="Iniciar Sesión" />
             </div>
         </div>
+
+        <br />
+
+        <div class="form-group text-center">
+            <button type="button" class="btn btn-link text-primary" style="text-decoration: none;" @onclick="UsuarioNuevo">
+                ¿No tienes cuenta? Regístrate aquí
+            </button>
+        </div>
+
     </RadzenCard>
 </EditForm>
 
@@ -56,7 +65,7 @@
             if (usuario != null)
             {
                 UsuarioDto.UsuarioId = usuario.UsuarioId;
-                UsuarioDto.Nombre = usuario.Identificacion;
+                UsuarioDto.Nombre = usuario.Nombre;
                 UsuarioDto.Identificacion = usuario.Identificacion;
                 UsuarioDto.Correo = usuario.Correo;
                 UsuarioDto.UserName = usuario.UserName;
@@ -84,6 +93,11 @@
                     Duration = 5000
                 });
         }
+    }
+
+    public async Task UsuarioNuevo()
+    {
+        navigation.NavigateTo("/NuevoUsuario");
     }
 
     void ShowNotification(NotificationMessage message)
